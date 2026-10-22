@@ -1,5 +1,4 @@
 lab-03-34@lab-03-34-OptiPlex-3280-AIO:~$ vim Exp3_1218.l
-lab-03-34@lab-03-34-OptiPlex-3280-AIO:~$ vim Exp3_1218.l
 lab-03-34@lab-03-34-OptiPlex-3280-AIO:~$ lex Exp3_1218.l
 lab-03-34@lab-03-34-OptiPlex-3280-AIO:~$ cc lex.yy.c -ll
 lab-03-34@lab-03-34-OptiPlex-3280-AIO:~$ ./a.out
