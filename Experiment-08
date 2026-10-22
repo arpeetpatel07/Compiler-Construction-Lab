@@ -1,0 +1,110 @@
+lab-03-25@lab-03-25-OptiPlex-3280-AIO:~$ vim postfix1218.l
+lab-03-25@lab-03-25-OptiPlex-3280-AIO:~$ vim postfix1218.y
+lab-03-25@lab-03-25-OptiPlex-3280-AIO:~$ yacc -d postfix1218.y
+lab-03-25@lab-03-25-OptiPlex-3280-AIO:~$ lex postfix1218.l
+lab-03-25@lab-03-25-OptiPlex-3280-AIO:~$ gcc y.tab.c lex.yy.c -o postfix1218 -ll
+lab-03-25@lab-03-25-OptiPlex-3280-AIO:~$ ./postfix1218
+Postfix Evaluator: Enter expressions (Ctrl+C to exit)
+5 4 +
+Result = 9
+10 20 * 5 /
+Result = 40
+10 0 /
+Error: Division by zero
+Result = 0
+10+5
+Syntax Error! Please re-enter.
+12 50 * 95 + 10 2 / -
+Result = 690
+
+
+
+
+
+
+
+
+CODE    vim postfix1218.l  :-
+
+
+
+
+
+
+%{
+#include "y.tab.h"
+#include <stdlib.h>
+%}
+
+%%
+[0-9]+		{ yylval = atoi(yytext); return NUMBER; }
+[ \t]		{ /* Ignore spaces and tabs */ }
+\n		{ return '\n'; }
+.		{ return yytext[0]; }
+%%
+
+int yywrap() {
+    return 1;
+}
+
+
+
+
+
+
+
+
+CODE      vim postfix1218.y  :-
+
+
+
+
+
+
+
+
+%{
+#include <stdio.h>
+#include <stdlib.h>
+int yylex(void);
+void yyerror(char *s);
+%}
+
+%token NUMBER
+
+%%
+
+lines:	/* empty */
+	| lines line
+	;
+
+line:	'\n'
+	| exp '\n'	{ printf("Result = %d\n", $1); }
+	| error '\n'	{ yyerrok; printf("Syntax Error! Please re-enter.\n"); }
+	;
+
+exp:	exp exp '+'	{ $$ = $1 + $2; }
+	| exp exp '-'	{ $$ = $1 - $2; }
+	| exp exp '*'	{ $$ = $1 * $2; }
+	| exp exp '/'	{
+				if($2 == 0) {
+					printf("Error: Division by zero\n");
+					$$ = 0;
+				} else {
+					$$ = $1 / $2;
+				}
+			}
+	| NUMBER	{ $$ = $1; }
+	;
+
+%%
+
+void yyerror(char *s) {
+    /* yyerror is handled manually in the rules for better recovery */
+}
+
+int main() {
+    printf("Postfix Evaluator: Enter expressions (Ctrl+C to exit)\n");
+    yyparse();
+    return 0;
+}
