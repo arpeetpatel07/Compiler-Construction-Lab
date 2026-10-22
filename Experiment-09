@@ -1,0 +1,114 @@
+sit-lab2-pc29@sit-lab2-pc29-OptiPlex-3280-AIO:~$ vim cal_1218.l
+sit-lab2-pc29@sit-lab2-pc29-OptiPlex-3280-AIO:~$ vim cal_1218.y
+sit-lab2-pc29@sit-lab2-pc29-OptiPlex-3280-AIO:~$ yacc -d cal_1218.y
+sit-lab2-pc29@sit-lab2-pc29-OptiPlex-3280-AIO:~$ lex cal_1218.l
+sit-lab2-pc29@sit-lab2-pc29-OptiPlex-3280-AIO:~$ gcc y.tab.c lex.yy.c -o cal_1218 -ll
+sit-lab2-pc29@sit-lab2-pc29-OptiPlex-3280-AIO:~$ ./cal_1218
+Desk Calculator: Enter expressions (Ctrl+C to exit)
+10+50
+Result = 60
+^C
+sit-lab2-pc29@sit-lab2-pc29-OptiPlex-3280-AIO:~$ ./cal_1218
+Desk Calculator: Enter expressions (Ctrl+C to exit)
+50*60+2
+Result = 3002
+^C
+sit-lab2-pc29@sit-lab2-pc29-OptiPlex-3280-AIO:~$ vim cal_1218.l
+sit-lab2-pc29@sit-lab2-pc29-OptiPlex-3280-AIO:~$ vim cal_1218.y
+sit-lab2-pc29@sit-lab2-pc29-OptiPlex-3280-AIO:~$ ./cal_1218
+Desk Calculator: Enter expressions (Ctrl+C to exit)
+12*50+95-10/2
+Result = 690
+
+
+
+
+
+
+CODE     vim cal_1218.l   :-
+
+
+
+
+
+
+%{
+#include "y.tab.h"
+#include <stdlib.h>
+%}
+
+%%
+[0-9]+          { yylval = atoi(yytext); return NUMBER; }
+[+\-*/\n()]     { return yytext[0]; }
+.               { return yytext[0]; }
+%%
+
+int yywrap() {
+    return 1;
+}
+
+
+
+
+
+
+
+CODE    vim cal_1218.y     :-
+
+
+
+
+
+
+%{
+#include <stdio.h>
+#include <stdlib.h>
+
+int yylex();
+int yyerror(char *s);
+%}
+
+%token NUMBER
+
+%left '+' '-'
+%left '*' '/'
+
+%%
+input : /* empty */
+      | input line
+      ;
+
+line  : expr '\n'
+        { printf("Result = %d\n", $1); }
+      | error '\n'
+        { printf("Syntax Error! Please re-enter.\n"); yyerrok; }
+      ;
+
+expr  : expr '+' expr
+        { $$ = $1 + $3; }
+      | expr '-' expr
+        { $$ = $1 - $3; }
+      | expr '*' expr
+        { $$ = $1 * $3; }
+      | expr '/' expr
+        {
+          if ($3 == 0) {
+              printf("Error: Division by zero!\n");
+              $$ = 0;
+          }
+          else
+              $$ = $1 / $3;
+        }
+      | '(' expr ')'
+        { $$ = $2; }
+      | NUMBER
+        { $$ = $1; }
+      ;
+
+%%
+
+int main() {
+    printf("Desk Calculator: Enter expressions (Ctrl+C to exit)\n");
+    yyparse();
+    return 0;
+}
