@@ -1,0 +1,50 @@
+sit-lab2-pc30@sit-lab2-pc30-OptiPlex-3280-AIO:~$ vim exp7_1218.l
+sit-lab2-pc30@sit-lab2-pc30-OptiPlex-3280-AIO:~$ lex exp7_1218.l
+sit-lab2-pc30@sit-lab2-pc30-OptiPlex-3280-AIO:~$ cc lex.yy.c -ll
+sit-lab2-pc30@sit-lab2-pc30-OptiPlex-3280-AIO:~$ ./a.out
+Enter lines (Ctrl+D to stop):
+hello.com
+ENDS WITH com: hello.com
+hello.org
+DOES NOT END WITH com: hello.org
+google.com
+ENDS WITH com: google.com
+test.net
+DOES NOT END WITH com: test.net
+
+
+
+
+
+
+
+CODE :-
+
+
+
+
+
+
+
+
+%{
+#include <stdio.h>
+%}
+
+%%
+^.*com$   { printf("ENDS WITH com: %s\n", yytext); }
+^.*$      { printf("DOES NOT END WITH com: %s\n", yytext); }
+\n        { /* Ignore newline */ }
+%%
+
+int yywrap()
+{
+    return 1;
+}
+
+int main()
+{
+    printf("Enter lines (Ctrl+D to stop):\n");
+    yylex();
+    return 0;
+}
