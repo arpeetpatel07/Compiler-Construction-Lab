@@ -1,0 +1,53 @@
+lab-03-15@lab-03-15-OptiPlex-3280-AIO:~$ vim case-1218.l
+lab-03-15@lab-03-15-OptiPlex-3280-AIO:~$ lex case-1218.l
+lab-03-15@lab-03-15-OptiPlex-3280-AIO:~$ gcc lex.yy.c -ll -o case-1218
+lab-03-15@lab-03-15-OptiPlex-3280-AIO:~$ ./case-1218
+Enter a string: hELLO wORLD
+Hello World
+^C
+lab-03-15@lab-03-15-OptiPlex-3280-AIO:~$ ./case-1218
+Enter a string: MY NAME IS ARPEET
+my name is arpeet
+
+
+
+
+CODE :-
+
+
+
+
+
+%{
+#include <stdio.h>
+%}
+
+%%
+[a-z] {
+        printf("%c", yytext[0] - 32);
+      }
+
+[A-Z] {
+        printf("%c", yytext[0] + 32);
+      }
+
+\n {
+     printf("\n");
+   }
+
+. {
+    printf("%c", yytext[0]);
+  }
+%%
+
+int main()
+{
+    printf("Enter a string: ");
+    yylex();
+    return 0;
+}
+
+int yywrap()
+{
+    return 1;
+}
